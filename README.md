@@ -29,8 +29,3 @@ npm start
 - `index.html`: canvas + HUD layout
 - `renderer.js`: renderer entry point, initializes WebGPU pipeline
 - `gpu.js`: WebGPU setup, pipeline, draw loop, FPS update
-
-## Troubleshooting
-
-- **`navigator.gpu` is missing / "WebGPU is not supported"**: update GPU drivers and make sure your system supports WebGPU.
-- **Blank window**: open DevTools and check the console for errors (the HUD will also show the error message).
