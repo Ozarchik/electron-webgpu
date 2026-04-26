@@ -1,15 +1,19 @@
 {
   "name": "electron-webgpu",
   "version": "1.0.0",
-  "description": "",
+  "description": "Minimal Electron + WebGPU demo (triangle + FPS overlay)",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "electron",
+    "webgpu",
+    "wgpu",
+    "graphics",
+    "demo"
+  ],
+  "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "electron": "^41.3.0"
