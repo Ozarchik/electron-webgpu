@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGPU App</title>
+</head>
+<body>
+    <h1>WebGPU check</h1>
+    <p id ="status">Checking...</p>
+    <pre id="details"></pre>
+
+    <script>
+        async function init() {
+            const status = document.getElementById('status');
+            const details = document.getElementById('details');
+
+            if (!navigator.gpu) {
+                status.textContent = 'WebGPU not support in this renderer.';
+                return;
+            }
+
+            status.textContent = 'WebGPU found, request for adapter...';
+
+            const adapter = await navigator.gpu.requestAdapter();           
+            if (!adapter) {
+                status.textContent = 'Adapter not received.';
+                return;
+            }
+
+            const device = await adapter.requestDevice();
+
+            status.textContent = 'Adapter and device successful created.';
+            details.textContent = [
+                `Adapter features: ${[...adapter.features].join(', ') || '(none)'}`,
+                `Adapter limits maxTextureDimension2D: ${adapter.limits.maxTextureDimension2D}`,
+                `Device features: ${[...device.features].join(', ') || '(none)'}`,
+            ].join('\n');
+        }
+
+        init().catch((err) => {
+            document.getElementById('status').textContent = 
+                `WebGPU init failed: ${err.message}`;
+            console.error(err);
+        });
+    </script>
+</body>
+</html>
