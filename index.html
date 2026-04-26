@@ -3,18 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>WebGPU App</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        #gpu-canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        #hud {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            pointer-events: none;
+            color: #111;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 6px 8px;
+            border-radius: 6px;
+            font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+        #title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+    </style>
 </head>
 <body>
-    <h1>WebGPU</h1>
-    <canvas id="gpu-canvas" width="800" height="600"></canvas>
-    <script src="gpu.js"></script>
-    <script>
-        async function main() {
-            const {device, context,format} = await initWebGPU();
-            render(device, context);
-        }
-
-        main();
-    </script>
+    <div id="hud">
+        <div id="title">WebGPU</div>
+        <div id="fps"></div>
+    </div>
+    <canvas id="gpu-canvas"></canvas>
+    <script type="module" src="./renderer.js"></script>
 </body>
 </html>
