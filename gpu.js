@@ -1,3 +1,9 @@
+const vertices = new Float32Array([
+    0.0,  0.5,
+   -0.5, -0.5,
+    0.5, -0.5 
+]);
+
 export async function initWebGPU() {
     if (!navigator.gpu) {
         throw new Error('WebGPU is not supported (navigator.gpu is missing)');
@@ -44,6 +50,68 @@ export async function initWebGPU() {
     return { device, context, canvas, format };
 }
 
+export function createDefaultShader(device) {
+    return device.createShaderModule({
+        code: `
+            @vertex
+            fn vs(@location(0) pos: vec2f) -> @builtin(position) vec4f {
+                return vec4f(pos, 0.0, 1.0);
+            }
+
+            @fragment
+            fn fs() -> @location(0) vec4f {
+                return vec4f(1.0, 0.5, 0.2, 1.0);
+            }
+        `,
+    });
+}
+
+export function createVertexBuffer(device) {
+    const vertexBuffer = device.createBuffer({
+        size: vertices.byteLength,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+    });
+
+    device.queue.writeBuffer(vertexBuffer, 0, vertices);
+    return vertexBuffer;
+}
+
+export function createRenderPipeline(device, shader, format) {
+    return device.createRenderPipeline({
+        layout: "auto",
+
+        vertex: {
+            module: shader,
+            entryPoint: "vs",
+            buffers: [
+                {
+                    arrayStride: 8,
+                    attributes: [
+                        {
+                            shaderLocation: 0,
+                            offset: 0,
+                            format: "float32x2",
+                        },
+                    ],
+                }
+            ]
+        },
+
+        fragment: {
+            module: shader,
+            entryPoint: "fs",
+            targets: [
+                {
+                    format,
+                },
+            ],
+        },
+        
+        primitive: {
+            topology: "triangle-list",
+        },
+    });
+}
 
 let lastTime = performance.now();
 let frames = 0;
@@ -65,7 +133,7 @@ function updateFpsInfo(now)
     }
 }
 
-export function renderFrame({device, context}) {
+export function renderFrame({device, context}, pipeline, vertexBuffer) {
     function frame(now) {
         updateFpsInfo(now);
 
@@ -83,6 +151,10 @@ export function renderFrame({device, context}) {
             ],
         });
 
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+
+        pass.draw(3);
         pass.end();
 
         device.queue.submit([encoder.finish()]);
